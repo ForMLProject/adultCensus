@@ -1,0 +1,24 @@
+training_pipeline_config:
+  pipeline_name: adult
+  artifact_dir: artifact
+
+data_ingestion_config:
+  dataset_download_url: https://github.com/forMLspace/Adult-Census-Income-Prediction/raw/main/adult_cencus.tgz
+  raw_data_dir: raw_data
+  tgz_download_dir: tgz_data
+  ingested_dir: ingested_data
+  ingested_train_dir: train
+  ingested_test_dir: test 
+
+data_validation_config:
+  schema_dir: config
+  schema_file_name: schema.yaml
+  report_file_name: report.json
+  report_page_file_name: report.html
+
+data_transformation_config:
+  transformed_dir: transformed_data
+  transformed_train_dir: train
+  transformed_test_dir: test
+  preprocessing_dir: preprocessed
+  preprocessed_object_file_name: preprocessed.pkl
