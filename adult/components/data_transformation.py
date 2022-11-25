@@ -3,7 +3,7 @@ from adult.entity.config_entity import DataTransformationConfig
 import numpy as np
 import pandas as pd
 from adult.constant import *
-from adult.util.util import read_yaml_file, load_data
+from adult.util.util import read_yaml_file, load_data, 
 from adult.logger import logging
 from adult.exception import AdultException
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -43,6 +43,49 @@ class data_transformation_component:
     def initiate_data_transformation(self)->DataTransformationArtifact:
         try:
             logging.info(f"Obtaining preprocessing object")
+            transformed_obj = self.get_transformed_object()
+            logging.info(f"Obtaining training and test file path.")
+            training_path = self.data_ingestion_artifact.train_data_path
+            test_data = self.data_ingestion_artifact.test_data_path
+            schema_file_path = self.data_validation_artifact.schema_file_path
+            logging.info(f"Loading training and test data as pandas dataframe.")
+            train_df = load_data(training_path)
+            test_df = load_data(test_data)
+            schema = read_yaml_file(schema_file_path)
+            target_column = schema[SCHEMA_TARGET_COLUMN]
+            logging.info(f"Splitting input and target feature from training and testing dataframe.")
+            input_feature_train_df = train_df.drop(columns=[target_column],axis=1)
+            target_feature_train_df = train_df[target_column]
+            
+            input_feature_test_df = test_df.drop(columns=[target_column],axis=1)
+            target_feature_test_df = test_df[target_column]
+            logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
+            input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
+            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
+            
+            train_arr = np.c_[ input_feature_train_arr, np.array(target_feature_train_df)]
+
+            test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
+            
+            transformed_train_dir = self.data_transformation_config.transformed_train_dir
+            transformed_test_dir = self.data_transformation_config.transformed_test_dir
+            
+            train_file_name = os.path.basename(train_file_path).replace(".csv",".npz")
+            test_file_name = os.path.basename(test_file_path).replace(".csv",".npz")
+            
+            transformed_train_file_path = os.path.join(transformed_train_dir, train_file_name)
+            transformed_test_file_path = os.path.join(transformed_test_dir, test_file_name)
+            
+            logging.info(f"Saving transformed training and testing array.")
+            
+            save_numpy_array_data(file_path=transformed_train_file_path,array=train_arr)
+            save_numpy_array_data(file_path=transformed_test_file_path,array=test_arr)
+            
+            preprocessing_obj_file_path = self.data_transformation_config.preprocessed_object_file_path
+
+            logging.info(f"Saving preprocessing object.")
+            save_object(file_path=preprocessing_obj_file_path,obj=preprocessing_obj)
+
             
 
         except Exception as e:
