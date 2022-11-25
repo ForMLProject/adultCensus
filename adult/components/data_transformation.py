@@ -3,7 +3,7 @@ from adult.entity.config_entity import DataTransformationConfig
 import numpy as np
 import pandas as pd
 from adult.constant import *
-from adult.util.util import read_yaml_file, load_data, 
+from adult.util.util import read_yaml_file, load_data, save_numpy_array_data, save_object
 from adult.logger import logging
 from adult.exception import AdultException
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -43,14 +43,14 @@ class data_transformation_component:
     def initiate_data_transformation(self)->DataTransformationArtifact:
         try:
             logging.info(f"Obtaining preprocessing object")
-            transformed_obj = self.get_transformed_object()
+            preprocessing_obj = self.get_transformed_object()
             logging.info(f"Obtaining training and test file path.")
-            training_path = self.data_ingestion_artifact.train_data_path
-            test_data = self.data_ingestion_artifact.test_data_path
+            train_file_path = self.data_ingestion_artifact.train_data_path
+            test_file_path = self.data_ingestion_artifact.test_data_path
             schema_file_path = self.data_validation_artifact.schema_file_path
             logging.info(f"Loading training and test data as pandas dataframe.")
-            train_df = load_data(training_path)
-            test_df = load_data(test_data)
+            train_df = load_data(train_file_path)
+            test_df = load_data(schema_file_path)
             schema = read_yaml_file(schema_file_path)
             target_column = schema[SCHEMA_TARGET_COLUMN]
             logging.info(f"Splitting input and target feature from training and testing dataframe.")
@@ -67,8 +67,8 @@ class data_transformation_component:
 
             test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
             
-            transformed_train_dir = self.data_transformation_config.transformed_train_dir
-            transformed_test_dir = self.data_transformation_config.transformed_test_dir
+            transformed_train_dir = self.data_transformation_config.transformed_train_path
+            transformed_test_dir = self.data_transformation_config.transformed_test_file_path
             
             train_file_name = os.path.basename(train_file_path).replace(".csv",".npz")
             test_file_name = os.path.basename(test_file_path).replace(".csv",".npz")
