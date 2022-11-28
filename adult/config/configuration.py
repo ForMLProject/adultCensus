@@ -2,7 +2,7 @@ from adult.logger import logging
 from adult.exception import AdultException
 from adult.util.util import read_yaml_file
 from adult.constant import *
-from adult.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig
+from adult.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig, DataTransformationConfig
 import os,sys
 class Configuration:
     def __init__(self,
@@ -47,6 +47,22 @@ class Configuration:
                                                             report_file_path=report_file_path,
                                                             report_page_file_path=report_page_file_path)
             return data_validation_config
+
+        except Exception as e:
+            raise AdultException(e,sys) from e
+            
+    def get_data_transformation_config(self)-> DataTransformationConfig:
+        try:
+            artifact_dir = self.training_pipeline_config.artifact_dir
+            data_transformation_info = self.config_info[DATA_TRANSFORMATION_CONFIG_KEY]
+            data_transformation_artifact_dir = os.path.join(artifact_dir, data_transformation_info[DATA_TRANSFORMATION_ARTIFACT_DIR_KEY], self.current_time_stamp)
+            transformed_train_path = os.path.join(data_transformation_artifact_dir, data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_DIR_KEY],data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_TRAIN_DIR_KEY])
+            transformed_train_path = os.path.join(data_transformation_artifact_dir, data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_DIR_KEY],data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_TEST_DIR_KEY])
+            preprocessed_file_path = os.path.join(data_transformation_artifact_dir,data_transformation_info[DATA_TRANSFORMATION_PREPROCESSING_DIR_KEY],data_transformation_info[DATA_TRANSFORMATION_PREPROCESSED_OBJ_FILE_NAME_KEY])
+            data_transformation_config = DataTransformationConfig(transformed_test_file_path=transformed_train_path,
+                                                                transformed_train_path = transformed_train_path,
+                                                                preprocessed_file_path=preprocessed_file_path)
+            return data_transformation_config
 
         except Exception as e:
             raise AdultException(e,sys) from e

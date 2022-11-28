@@ -23,7 +23,7 @@ DATA_INGESTION_TEST_DIR_KEY = "ingested_test_dir"
 
 TRAINING_PIPELINE_CONFIG_KEY = 'training_pipeline_config'
 TRAINING_PIPELINE_NAME_KEY = 'pipeline_name'
-TRAINING_PIPELINE_ARTIFACT_DIR = 'artifact'
+TRAINING_PIPELINE_ARTIFACT_DIR = 'artifact_dir'
 
 DATA_VALIDATION_CONFIG_KEY = "data_validation_config"
 DATA_VALIDATION_ARTIFACT_DIR_KEY = "data_validation"
