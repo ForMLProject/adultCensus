@@ -18,6 +18,7 @@ class data_transformation_component:
             self.data_ingestion_artifact = data_ingestion_artifact
             self.data_validation_artifact = data_validation_artifact
             self.data_transformation_config = data_transformation_config
+
         except Exception as e:
             raise AdultException(e,sys) from e
 
@@ -34,8 +35,8 @@ class data_transformation_component:
 
             logging.info(f"Numerical Columns are {num_cols}")
             logging.info(f"Categorical Columns are {cat_cols}")
-            preprocessing = ColumnTransformer([("num_pipeline", num_pipeline(), num_cols),
-                                                ("cat_cols", cat_pipeline(), cat_cols)])
+            preprocessing = ColumnTransformer([("num_pipeline", num_pipeline, num_cols),
+                                                ("cat_cols", cat_pipeline, cat_cols)])
             return preprocessing
         except Exception as e:
             raise AdultException(e,sys) from e        
@@ -43,23 +44,36 @@ class data_transformation_component:
     def initiate_data_transformation(self)->DataTransformationArtifact:
         try:
             logging.info(f"Obtaining preprocessing object")
+
             preprocessing_obj = self.get_transformed_object()
+
             logging.info(f"Obtaining training and test file path.")
+
             train_file_path = self.data_ingestion_artifact.train_data_path
             test_file_path = self.data_ingestion_artifact.test_data_path
             schema_file_path = self.data_validation_artifact.schema_file_path
+
+            #print(train_file_path, test_file_path, schema_file_path)
+
             logging.info(f"Loading training and test data as pandas dataframe.")
-            train_df = load_data(train_file_path)
-            test_df = load_data(schema_file_path)
+
+            train_df = load_data(file_path = train_file_path, schema_file_path=schema_file_path)
+            test_df = load_data(file_path=test_file_path,schema_file_path=schema_file_path)
             schema = read_yaml_file(schema_file_path)
+
             target_column = schema[SCHEMA_TARGET_COLUMN]
+
             logging.info(f"Splitting input and target feature from training and testing dataframe.")
+            
+            
             input_feature_train_df = train_df.drop(columns=[target_column],axis=1)
             target_feature_train_df = train_df[target_column]
             
             input_feature_test_df = test_df.drop(columns=[target_column],axis=1)
             target_feature_test_df = test_df[target_column]
+
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
+            
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
             input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
             
@@ -81,7 +95,7 @@ class data_transformation_component:
             save_numpy_array_data(file_path=transformed_train_file_path,array=train_arr)
             save_numpy_array_data(file_path=transformed_test_file_path,array=test_arr)
             
-            preprocessing_obj_file_path = self.data_transformation_config.preprocessed_object_file_path
+            preprocessing_obj_file_path = self.data_transformation_config.preprocessed_file_path
 
             logging.info(f"Saving preprocessing object.")
             save_object(file_path=preprocessing_obj_file_path,obj=preprocessing_obj)

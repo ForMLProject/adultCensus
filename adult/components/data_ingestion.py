@@ -54,10 +54,9 @@ class data_ingestion_component:
             # input_features = df[:,:-1]
             # output_features = df[:,-1]
             Split = StratifiedShuffleSplit(n_splits=10,test_size=0.3)
-            #taking only input features of the data
             for train_index,test_index in Split.split(X=df,y=df['salary']):
-                strat_train_set = df.loc[train_index].drop('salary', axis=1)
-                strat_test_set = df.loc[test_index].drop('salary', axis=1)
+                strat_train_set = df.loc[train_index]
+                strat_test_set = df.loc[test_index]
 
             train_file_path = os.path.join(self.data_ingestion_config.ingested_train_dir,csv_file_name)
             test_file_path = os.path.join(self.data_ingestion_config.ingested_test_dir, csv_file_name)

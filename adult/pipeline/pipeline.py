@@ -41,7 +41,7 @@ class pipeline:
             data_transformation = data_transformation_component(data_ingestion_artifact=data_ingestion_artifact,
                                                                 data_validation_artifact=data_validation_artifact,
                                                                 data_transformation_config=self.pipeline_config.get_data_transformation_config())
-            return data_transformation
+            return data_transformation.initiate_data_transformation()
 
         except Exception as e:
             raise AdultException(e,sys) from e
