@@ -26,7 +26,7 @@ class data_ingestion_component:
             adult_file_name = os.path.basename(download_url)
             tgz_file_dir = os.path.join(tgz_download_dir,adult_file_name)
             logging.info(f"{adult_file_name} is getting downloaded from {download_url}")
-            urllib_request.urlretrieve(download_url,tgz_file_dir)
+            urllib_request.urlretrieve(download_url, tgz_file_dir)
             logging.info(f"{adult_file_name} has been successfully downloaded in {tgz_file_dir}")
             return tgz_file_dir
         except Exception as e:

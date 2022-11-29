@@ -45,14 +45,13 @@ class data_validation_component:
         except Exception as e:
             raise AdultException(e,sys) from e
     
-    def validate_data_schema(self, file_path, schema_file_path)->bool:
+    def validate_data_schema(self)->bool:
         try:
-            self.file_path = file_path
-            self.schema_file_path = schema_file_path
+            self.schema_file_path = self.data_validation_config.schema_file_path
             validation_status = False
             column_count_equal = False
             column_names_same = False
-            schema_data = read_yaml_file(schema_file_path)
+            schema_data = read_yaml_file(self.schema_file_path)
             schema_columns = schema_data[SCHEMA_COLUMNS_KEY]
             train_data = pd.read_csv(self.data_ingestion_artifact.train_data_path)
 
@@ -79,7 +78,7 @@ class data_validation_component:
             ca_data_drift_profile.calculate(train_data, test_data)
             report = json.loads(ca_data_drift_profile.json())
 
-            report_file_path = self.data_validation_config.report_file_name
+            report_file_path = self.data_validation_config.report_file_path
             report_dir = os.path.dirname(report_file_path)
             os.makedirs(report_dir,exist_ok=True)
 
@@ -92,10 +91,10 @@ class data_validation_component:
     def save_data_drift_report_page(self):
         try:
             dashboard = Dashboard(tabs=[DataDriftTab()])
-            train_df,test_df = self.get_train_and_test_df()
+            train_df,test_df = self.get_train_and_test_data()
             dashboard.calculate(train_df,test_df)
 
-            report_page_file_path = self.data_validation_config.report_page_file_name
+            report_page_file_path = self.data_validation_config.report_page_file_path
             report_page_dir = os.path.dirname(report_page_file_path)
             os.makedirs(report_page_dir,exist_ok=True)
             dashboard.save(report_page_file_path)
@@ -113,12 +112,12 @@ class data_validation_component:
             raise AdultException(e,sys) from e
     def initiate_data_validation(self)->DataValidationArtifact :
         try:
-            self.is_train_test_file_exists()
+            self.is_train_and_test_file_exist()
             self.is_data_drift_found()
             data_validation_artifact = DataValidationArtifact(
-                schema_file_name=self.data_validation_config.schema_file_name,
-                report_file_name=self.data_validation_config.report_file_name,
-                report_page_file_name=self.data_validation_config.report_page_file_name,
+                schema_file_path=self.data_validation_config.schema_file_path,
+                report_file_path=self.data_validation_config.report_file_path,
+                report_page_file_path=self.data_validation_config.report_page_file_path,
                 is_validated=self.validate_data_schema(),
                 message="Data Validation performed successully."
             )
