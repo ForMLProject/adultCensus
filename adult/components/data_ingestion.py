@@ -8,6 +8,7 @@ from six.moves import urllib_request
 import numpy as np
 from sklearn.model_selection import StratifiedShuffleSplit
 import tarfile
+import os,sys
 
 class data_ingestion_component:
     def __init__(self,data_ingestion_config:DataIngestionConfig) -> None:
@@ -22,7 +23,7 @@ class data_ingestion_component:
             download_url = self.data_ingestion_config.dataset_download_url
             tgz_download_dir = self.data_ingestion_config.tgz_download_dir
             os.makedirs(tgz_download_dir,exist_ok=True)
-            adult_file_name = os.path.basename
+            adult_file_name = os.path.basename(download_url)
             tgz_file_dir = os.path.join(tgz_download_dir,adult_file_name)
             logging.info(f"{adult_file_name} is getting downloaded from {download_url}")
             urllib_request.urlretrieve(download_url,tgz_file_dir)

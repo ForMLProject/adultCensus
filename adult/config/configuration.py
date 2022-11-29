@@ -28,7 +28,6 @@ class Configuration:
             data_ingestion_config = DataIngestionConfig(dataset_download_url=dataset_download_url,
                                                         tgz_download_dir=tgz_download_dir,
                                                         raw_data_dir=raw_data_dir,
-                                                        ingested_dir=ingested_dir,
                                                         ingested_train_dir=ingested_train_dir,
                                                         ingested_test_dir=ingested_test_dir)
             return data_ingestion_config
@@ -73,6 +72,11 @@ class Configuration:
         try:
             training_pipeline_config = self.config_info[TRAINING_PIPELINE_CONFIG_KEY]
             artifact_dir = os.path.join(ROOT_DIR,training_pipeline_config[TRAINING_PIPELINE_NAME_KEY],training_pipeline_config[TRAINING_PIPELINE_ARTIFACT_DIR])
-            return artifact_dir
+            training_pipeline_config = TrainingPipelineConfig(artifact_dir=artifact_dir)
+            logging.info(f"Training pipleine config: {training_pipeline_config}")
+            return training_pipeline_config
+
         except Exception as e:
             raise AdultException(e,sys) from e
+
+            
