@@ -2,7 +2,7 @@ from adult.logger import logging
 from adult.exception import AdultException
 from adult.util.util import read_yaml_file
 from adult.constant import *
-from adult.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig, DataTransformationConfig
+from adult.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
 import os,sys
 class Configuration:
     def __init__(self,
@@ -62,6 +62,22 @@ class Configuration:
                                                                 transformed_train_path = transformed_train_path,
                                                                 preprocessed_file_path=preprocessed_file_path)
             return data_transformation_config
+
+        except Exception as e:
+            raise AdultException(e,sys) from e
+
+    def get_model_training_config(self)->ModelTrainerConfig:
+        try:
+            artifact_dir = self.training_pipeline_config.artifact_dir
+            model_training_info = self.config_info[MODEL_TRAINING_CONFIG_KEY]
+            model_training_artifact_dir = os.path.join(artifact_dir, MODEL_TRAINING_ARTIFACT_DIR_KEY , get_curr_timestamp)
+            trained_model_path = os.path.join(model_training_artifact_dir, model_training_info[MODEL_TRAINING_TRAINED_MODEL_DIR_KEY], model_training_info[MODEL_TRAINING_BASE_CONF_FILE_NAME_KEY])
+            model_config_path = os.path.join(ROOT_DIR, model_training_info[MODEL_TRAINING_BASE_CONF_DIR_KEY], model_training_info[MODEL_TRAINING_BASE_CONF_FILE_NAME_KEY])
+            model_trainer_config = ModelTrainerConfig(base_accuracy=0.7,
+                                                    trained_model_path=trained_model_path,
+                                                    model_config_path=model_config_path)
+            return model_trainer_config
+
 
         except Exception as e:
             raise AdultException(e,sys) from e
