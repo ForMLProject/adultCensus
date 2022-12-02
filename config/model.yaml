@@ -7,6 +7,14 @@ grid_search:
 
 model_selection:
   model_0:
+    class: LinearRegression
+    module: sklearn.linear_model
+    params:
+      fit_intercept: true
+    search_param_grid:
+      fit_intercept:
+      - true
+      - false
   model_1:
   model_2:
   
