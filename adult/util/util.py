@@ -2,6 +2,7 @@ import yaml
 from adult.exception import AdultException
 from adult.constant import *
 import os, sys
+from adult.logger import logging
 import pandas as pd
 import numpy as np
 import dill
@@ -16,6 +17,16 @@ def read_yaml_file(file_path:str)->dict:
             return yaml.safe_load(yaml_file)
     except Exception as e:
         raise AdultException(e,sys) from e
+
+def load_np_data(file_path:str)->np.array:
+    try:
+        logging.info(f"Loading data into numpy array")
+        with open(file_path) as file:
+            return np.load(file)
+    except Exception as e:
+        raise AdultException(e,sys) from e
+
+
 
 def load_data(file_path:str, schema_file_path:str)-> pd.DataFrame:
     try:
@@ -36,6 +47,13 @@ def load_data(file_path:str, schema_file_path:str)-> pd.DataFrame:
             raise Exception(error_message)
 
         return df
+    except Exception as e:
+        raise AdultException(e,sys) from e
+
+def load_object(file_path:str):
+    try:
+        with open(file_path) as file:
+            return dill.load(file)
     except Exception as e:
         raise AdultException(e,sys) from e
 
@@ -63,6 +81,14 @@ def save_numpy_array_data(file_path: str, array: np.array):
         os.makedirs(dir_path, exist_ok=True)
         with open(file_path, 'wb') as file_obj:
             np.save(file_obj, array)
+    except Exception as e:
+        raise AdultException(e, sys) from e
+
+def write_yaml_file(file_path:str, data:dict=None):
+    try:
+        os.makedirs(os.path.dirname(file_path),exist_ok=True)
+        with open(file_path) as file:
+            yaml.dump(data, file)
     except Exception as e:
         raise AdultException(e, sys) from e
 

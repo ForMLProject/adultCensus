@@ -2,11 +2,10 @@ grid_search:
   class: GridSearchCV
   module: sklearn.model_selection
   params:
-    verbose: 2
     cv: 5
-
+    verbose: 2
 model_selection:
-  model_0:
+  module_0:
     class: LinearRegression
     module: sklearn.linear_model
     params:
@@ -15,6 +14,12 @@ model_selection:
       fit_intercept:
       - true
       - false
-  model_1:
-  model_2:
+  module_1:
+    class: RandomForestRegressor
+    module: sklearn.ensemble
+    params:
+      min_samples_leaf: 3
+    search_param_grid:
+      min_samples_leaf:
+      - 6
   

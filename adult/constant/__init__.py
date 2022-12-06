@@ -64,3 +64,11 @@ MODEL_TRAINING_BASE_CONF_FILE_NAME_KEY = "base_conf_file_name"
 MODEL_TRAINING_BASE_ACCURACY = "base_accuracy"
 MODEL_TRAINING_ARTIFACT_DIR_KEY = "model_trainer"
 
+MODEL_EVALUATION_ARTIFACT_DIR_KEY = "model_evaluation"
+MODEL_EVALUATIUON_FILE_NAME_KEY = "model_evaluation_file_name"
+MODEL_EVALUATION_CONFIG_KEY = "model_evaluation_config"
+
+
+BEST_MODEL_KEY = "best_model"
+MODEL_PATH_KEY = "model_path"
+HISTORY_KEY = "history"

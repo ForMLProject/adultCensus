@@ -12,3 +12,9 @@ DataTransformationConfig = namedtuple("DataTransformationConfig",
 
 ModelTrainerConfig = namedtuple("ModelTrainerConfig",
                                 ["base_accuracy", "trained_model_path", "model_config_path"])
+
+ModelEvaluationConfig = namedtuple("ModelEvaluationConfig",
+                                    ["model_evaluation_file_path", "timestamp"])
+
+ModelPusherConfig = namedtuple("ModelPusherConfig",
+                                ["export_dir_path"])
