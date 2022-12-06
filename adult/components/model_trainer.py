@@ -1,5 +1,6 @@
 from adult.entity.artifact_entity import DataIngestionArtifact, DataTransformationArtifact, DataValidationArtifact, ModelTrainerArtifact
 from adult.entity.config_entity import ModelTrainerConfig
+from adult.entity.model_factory import model_factory, MetricInfoArtifact, GridSearchedBestModel, evaluate_regression
 import numpy as np
 import pandas as pd
 from adult.constant import *
@@ -16,5 +17,10 @@ class model_trainer:
             
         except Exception as e:
             raise AdultException(e,sys) from e
+
+    def initiate_model_trainer(self)->ModelTrainerArtifact:
+        logging.info(f"Loading Transformed Data")
+        
+        
 
         
