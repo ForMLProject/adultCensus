@@ -1,5 +1,5 @@
 from adult.logger import logging
-from adult.exception import adultException
+from adult.exception import AdultException
 from adult.entity.artifact_entity import ModelPusherArtifact, ModelEvaluationArtifact
 from adult.entity.config_entity import ModelPusherConfig
 import os, sys

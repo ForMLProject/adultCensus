@@ -59,7 +59,7 @@ class pipeline:
         except Exception as e:
             raise AdultException(e,sys) from e
 #we take them as inputs because attributes inside them are needed to call the evaluation function and it is likewise for all the function inputs in this project
-    def start_model_evaluation(self, data_ingestion_artifact:DataIngestionArtifact, data_validation_artifact: DataValidationArtifact, model_trainer_artifact:ModelTrainerArtifact): 
+    def start_model_evaluation(self, data_ingestion_artifact:DataIngestionArtifact, data_validation_artifact: DataValidationArtifact, model_trainer_artifact:ModelTrainerArtifact)->ModelEvaluationArtifact: 
         try:
             self.data_ingestion_artifact = data_ingestion_artifact
             self.data_validation_artifact = data_validation_artifact
@@ -67,7 +67,7 @@ class pipeline:
 
             ModelEvaluation = model_evaluation(data_ingestion_artifact=self.data_ingestion_artifact,
                                                 data_validation_artifact=self.data_validation_artifact,
-                                                model_trainer_artifact=self.model_trainer_artifact
+                                                model_trainer_artifact=self.model_trainer_artifact,
                                                 model_evaluation_config=self.pipeline_config.get_model_evaluation_config)
             return ModelEvaluation
         except Exception as e:
@@ -95,13 +95,8 @@ class pipeline:
                                                                     data_validation_artifact=data_validation_artifact,
                                                                     model_trainer_artifact=model_trainer_artifact)
             
-
-            if model_evaluation_artifact.is_model_accepted:
-                model_pusher_artifact = self.start_model_pusher(model_evaluation_artifact=model_evaluation_artifact)
-                logging.info(f"Model Pusher Directory: {model_pusher_artifact}")
-            else:
-                logging.info(f"Model rejected")
-            logging.info(f"Pipeline Completed")
+            model_pusher_artifact = self.start_model_pusher(model_evaluation_artifact=model_evaluation_artifact)
+                
 
         except Exception as e:
             raise AdultException(e,sys) from e

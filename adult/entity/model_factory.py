@@ -160,9 +160,9 @@ class model_factory:
             grid_search_ref = model_factory.import_class_from_module(module_name=self.grid_seach_module, class_name=self.grid_search_class)
             grid_search_obj = grid_search_ref(estimator = initialized_model_detail.model, param_grid = initialized_model_detail.param_grid_search)
             grid_search_obj = model_factory.update_property_class(grid_search_obj, self.grid_search_params)
-            logging.info(f"{">>"* 30} f"Training {type(initialized_model_detail.model).__name__} Started." {"<<"*30}")
+            logging.info(f"{'>>'*30}Training {type(initialized_model_detail.model).__name__} Started.{'<<'*30}")
             grid_search_obj.fit(input_feature, output_feature)
-            logging.info(f"{">>"* 30} f"Training {type(initialized_model_detail.model).__name__} Completed." {"<<"*30}")
+            logging.info(f"{'>>'*30}Training {type(initialized_model_detail.model).__name__} Completed.{'<<'*30}")
             return GridSearchedBestModel(
                 model_serial_number=initialized_model_detail.model_serial_number,
                 model=model,
