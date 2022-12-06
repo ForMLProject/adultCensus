@@ -24,8 +24,10 @@ class Estimator:
 class model_trainer:
     def __init__(self, data_transformation_artifact = DataTransformationArtifact,model_trainer_config = ModelTrainerConfig) -> None:
         try:
+            logging.info(f"Model trainer component entered")
             self.data_transformation_artifact = data_transformation_artifact
             self.model_trainer_config = model_trainer_config
+
             
         except Exception as e:
             raise AdultException(e,sys) from e

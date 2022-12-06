@@ -81,7 +81,7 @@ class data_transformation_component:
 
             test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
             
-            transformed_train_dir = self.data_transformation_config.transformed_train_path
+            transformed_train_dir = self.data_transformation_config.transformed_train_file_path
             transformed_test_dir = self.data_transformation_config.transformed_test_file_path
             
             train_file_name = os.path.basename(train_file_path).replace(".csv",".npz")
@@ -99,6 +99,12 @@ class data_transformation_component:
 
             logging.info(f"Saving preprocessing object.")
             save_object(file_path=preprocessing_obj_file_path,obj=preprocessing_obj)
+
+            data_transformation_artifact = DataTransformationArtifact(transformed_train_data_path=transformed_train_file_path,
+                                                                    transformed_test_data_path=transformed_test_file_path,
+                                                                    preprocessed_file_path=preprocessing_obj_file_path,
+                                                                    is_transformed=True)
+            return data_transformation_artifact
 
             
 

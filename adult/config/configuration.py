@@ -56,10 +56,10 @@ class Configuration:
             data_transformation_info = self.config_info[DATA_TRANSFORMATION_CONFIG_KEY]
             data_transformation_artifact_dir = os.path.join(artifact_dir, DATA_TRANSFORMATION_ARTIFACT_DIR_KEY, self.current_time_stamp)
             transformed_train_path = os.path.join(data_transformation_artifact_dir, data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_DIR_KEY],data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_TRAIN_DIR_KEY])
-            transformed_train_path = os.path.join(data_transformation_artifact_dir, data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_DIR_KEY],data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_TEST_DIR_KEY])
+            transformed_test_path = os.path.join(data_transformation_artifact_dir, data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_DIR_KEY],data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_TEST_DIR_KEY])
             preprocessed_file_path = os.path.join(data_transformation_artifact_dir,data_transformation_info[DATA_TRANSFORMATION_PREPROCESSING_DIR_KEY],data_transformation_info[DATA_TRANSFORMATION_PREPROCESSED_OBJ_FILE_NAME_KEY])
-            data_transformation_config = DataTransformationConfig(transformed_test_file_path=transformed_train_path,
-                                                                transformed_train_path = transformed_train_path,
+            data_transformation_config = DataTransformationConfig(transformed_test_file_path=transformed_test_path,
+                                                                transformed_train_file_path = transformed_train_path,
                                                                 preprocessed_file_path=preprocessed_file_path)
             return data_transformation_config
 
@@ -71,7 +71,7 @@ class Configuration:
             artifact_dir = self.training_pipeline_config.artifact_dir
             model_training_info = self.config_info[MODEL_TRAINING_CONFIG_KEY]
             model_training_artifact_dir = os.path.join(artifact_dir, MODEL_TRAINING_ARTIFACT_DIR_KEY , get_curr_timestamp())
-            trained_model_path = os.path.join(model_training_artifact_dir, model_training_info[MODEL_TRAINING_TRAINED_MODEL_DIR_KEY], model_training_info[MODEL_TRAINING_BASE_CONF_FILE_NAME_KEY])
+            trained_model_path = os.path.join(model_training_artifact_dir, model_training_info[MODEL_TRAINING_TRAINED_MODEL_DIR_KEY], model_training_info[MODEL_TRAINING_TRAINED_MODEL_FILE_NAME_KEY])
             model_config_path = os.path.join(ROOT_DIR, model_training_info[MODEL_TRAINING_BASE_CONF_DIR_KEY], model_training_info[MODEL_TRAINING_BASE_CONF_FILE_NAME_KEY])
             model_trainer_config = ModelTrainerConfig(base_accuracy=0.7,
                                                     trained_model_path=trained_model_path,

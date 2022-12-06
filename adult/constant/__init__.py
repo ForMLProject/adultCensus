@@ -58,11 +58,15 @@ DATA_TRANSFORMATION_PREPROCESSED_OBJ_FILE_NAME_KEY = "preprocessed_object_file_n
 
 MODEL_TRAINING_CONFIG_KEY = "model_training_config"
 MODEL_TRAINING_TRAINED_MODEL_DIR_KEY = "trained_model_dir"
-MODEL_TRAINING_TRAINED_MODEL_FILE_NAME_KEY = "trained_model_file_name"
-MODEL_TRAINING_BASE_CONF_DIR_KEY = "base_conf_dir"
-MODEL_TRAINING_BASE_CONF_FILE_NAME_KEY = "base_conf_file_name"
+MODEL_TRAINING_TRAINED_MODEL_FILE_NAME_KEY = "model_file_name"
+MODEL_TRAINING_BASE_CONF_DIR_KEY = "model_config_dir"
+MODEL_TRAINING_BASE_CONF_FILE_NAME_KEY = "model_config_file_name"
 MODEL_TRAINING_BASE_ACCURACY = "base_accuracy"
 MODEL_TRAINING_ARTIFACT_DIR_KEY = "model_trainer"
+
+
+
+
 
 MODEL_EVALUATION_ARTIFACT_DIR_KEY = "model_evaluation"
 MODEL_EVALUATIUON_FILE_NAME_KEY = "model_evaluation_file_name"
@@ -75,3 +79,6 @@ HISTORY_KEY = "history"
 
 MODEL_PUSHER_CONFIG_KEY = "model_pusher_config"
 MODEL_PUSHER_MODEL_EXPORT_DIR_KEY = "model_export_dir"
+
+EXPERIMENT_DIR_NAME="experiment"
+EXPERIMENT_FILE_NAME="experiment.csv"

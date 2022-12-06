@@ -21,8 +21,8 @@ def read_yaml_file(file_path:str)->dict:
 def load_np_data(file_path:str)->np.array:
     try:
         logging.info(f"Loading data into numpy array")
-        with open(file_path) as file:
-            return np.load(file)
+        with open(file_path, 'rb') as file:
+            return np.load(file, allow_pickle=True)
     except Exception as e:
         raise AdultException(e,sys) from e
 

@@ -122,7 +122,7 @@ class model_factory:
     @staticmethod
     def import_class_from_module(module_name:str, class_name:str):
         try:
-            module = importlib(module_name)
+            module = importlib.import_module(module_name)
             logging.info(f"Importing {class_name} from {module_name}")
             get_class = getattr(module, class_name)
             return get_class
