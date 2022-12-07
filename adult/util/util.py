@@ -52,7 +52,7 @@ def load_data(file_path:str, schema_file_path:str)-> pd.DataFrame:
 
 def load_object(file_path:str):
     try:
-        with open(file_path) as file:
+        with open(file_path, "rb") as file:
             return dill.load(file)
     except Exception as e:
         raise AdultException(e,sys) from e

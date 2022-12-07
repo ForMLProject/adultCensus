@@ -6,7 +6,7 @@ from adult.constant import *
 from adult.util.util import read_yaml_file, load_data, save_numpy_array_data, save_object
 from adult.logger import logging
 from adult.exception import AdultException
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import make_pipeline
 from sklearn.compose import ColumnTransformer
@@ -29,15 +29,32 @@ class data_transformation_component:
 
             num_cols = data_schema[SCHEMA_NUMERICAL_COLUMNS]
             cat_cols = data_schema[SCHEMA_CATEGORICAL_COLUMNS]
+            
 
             num_pipeline = make_pipeline(SimpleImputer(missing_values=np.nan, strategy="mean"),StandardScaler() )
             cat_pipeline = make_pipeline(SimpleImputer(missing_values=np.nan, strategy="most_frequent"), OneHotEncoder(sparse=False,handle_unknown='ignore'), StandardScaler(with_mean=False))
+            
 
             logging.info(f"Numerical Columns are {num_cols}")
             logging.info(f"Categorical Columns are {cat_cols}")
             preprocessing = ColumnTransformer([("num_pipeline", num_pipeline, num_cols),
-                                                ("cat_cols", cat_pipeline, cat_cols)])
+                                                ("cat_cols", cat_pipeline, cat_cols),])
             return preprocessing
+
+        except Exception as e:
+            raise AdultException(e,sys) from e 
+
+    def get_transformed_target_object(self)->ColumnTransformer:
+        try: 
+            schema_data = self.data_validation_artifact.schema_file_path
+            data_schema = read_yaml_file(schema_data)
+
+            target_cols = data_schema[SCHEMA_TARGET_COLUMN]
+            target_pipeline = make_pipeline(SimpleImputer(missing_values=np.nan, strategy="most_frequent"), LabelEncoder(), StandardScaler(with_mean=False))
+            logging.info(f"Target Column is {target_cols}")
+            preprocessing_target = ColumnTransformer([("target_cols", target_pipeline, target_cols)])
+            return preprocessing_target
+            
         except Exception as e:
             raise AdultException(e,sys) from e        
         
@@ -46,6 +63,7 @@ class data_transformation_component:
             logging.info(f"Obtaining preprocessing object")
 
             preprocessing_obj = self.get_transformed_object()
+            preprocessing_target = self.get_transformed_target_object()
 
             logging.info(f"Obtaining training and test file path.")
 
@@ -68,6 +86,7 @@ class data_transformation_component:
             
             input_feature_train_df = train_df.drop(columns=[target_column],axis=1)
             target_feature_train_df = train_df[target_column]
+
             
             input_feature_test_df = test_df.drop(columns=[target_column],axis=1)
             target_feature_test_df = test_df[target_column]
@@ -75,12 +94,10 @@ class data_transformation_component:
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
             
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
-            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
-            
-            train_arr = np.c_[ input_feature_train_arr, np.array(target_feature_train_df)]
+            input_feature_test_arr = preprocessing_obj.transform(test_df)
+            train_arr = np.c_[ input_feature_train_arr]
 
-            test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
-            
+            test_arr = np.c_[input_feature_test_arr]
             transformed_train_dir = self.data_transformation_config.transformed_train_file_path
             transformed_test_dir = self.data_transformation_config.transformed_test_file_path
             

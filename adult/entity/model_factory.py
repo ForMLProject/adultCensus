@@ -41,41 +41,51 @@ MetricInfoArtifact = namedtuple("MetricInfoArtifact",
 
 
 def evaluate_regression(model_list:List, Xtrain:np.array, Xtest:np.array, yTrain:np.array, yTest:np.array, base_accuracy:float=0.6)->MetricInfoArtifact:
-    index_number = 0
-    model_name = str(model)
-    for model in model_list:
-        logging.info(f"{'>'*10}Starting Evaluation of the model {str(model)} {'<'*10}")
-        y_train_pred = model.predict(Xtrain)
-        y_test_pred = model.predict(Xtest)
+    try:
+        index_number = 0
         
-        logging.info(f"Calculating accuracy of the model")
+        for model in model_list:
+            logging.info(f"{'>'*10}Starting Evaluation of the model {str(model)} {'<'*10}")
+            y_train_pred = model.predict(Xtrain)
+            y_test_pred = model.predict(Xtest)
+            
+            logging.info(f"Calculating accuracy of the model")
 
-        train_accuracy =  r2_score(yTrain, y_train_pred)
-        test_accuracy = r2_score(yTest, y_test_pred)
+            train_accuracy =  r2_score(yTrain, y_train_pred)
+            test_accuracy = r2_score(yTest, y_test_pred)
 
-        logging.info(f"Train accuracy is {train_accuracy} and Test accuracy is {test_accuracy}")
-        logging.info(f"Calculating RMSE")
+            logging.info(f"Train accuracy is {train_accuracy} and Test accuracy is {test_accuracy}")
+            logging.info(f"Calculating RMSE")
 
-        train_rmse = mean_squared_error(yTrain,y_train_pred)
-        test_rmse = mean_squared_error(yTest, y_test_pred)
+            train_rmse = mean_squared_error(yTrain,y_train_pred)
+            test_rmse = mean_squared_error(yTest, y_test_pred)
 
-        logging.info(f"Train rmse is {train_rmse} and Test rmse is {test_rmse}")
+            logging.info(f"Train rmse is {train_rmse} and Test rmse is {test_rmse}")
 
-        model_accuracy = (2*(train_accuracy*test_accuracy))/(train_accuracy+test_accuracy)
-        diff_in_accuracy = abs(test_accuracy - train_accuracy)
+            model_accuracy = (2*(train_accuracy*test_accuracy))/(train_accuracy+test_accuracy)
+            diff_in_accuracy = abs(test_accuracy - train_accuracy)
 
-        logging.info(f"model accuracy is {model_accuracy} and difference is {diff_in_accuracy}")
+            logging.info(f"model accuracy is {model_accuracy} and difference is {diff_in_accuracy}")
+            model_name = str(model)
 
-        if model_accuracy >= base_accuracy and diff_in_accuracy <= 0.05:
-            base_accuracy = model_accuracy
-            metrix_info = MetricInfoArtifact(model_name=model_name,
-                                            model_object=model,
-                                            train_rmse=train_rmse,
-                                            test_rmse=test_rmse,
-                                            train_accuracy=test_accuracy,
-                                            test_accuracy=test_accuracy,
-                                            index_number=index_number,
-                                            model_accuracy=model_accuracy)
+            if model_accuracy >= base_accuracy and diff_in_accuracy <= 0.05:
+                base_accuracy = model_accuracy
+                metric_info_artifact = MetricInfoArtifact(model_name=model_name,
+                                                model_object=model,
+                                                train_rmse=train_rmse,
+                                                test_rmse=test_rmse,
+                                                train_accuracy=test_accuracy,
+                                                test_accuracy=test_accuracy,
+                                                index_number=index_number,
+                                                model_accuracy=model_accuracy)
+
+                logging.info(f"Acceptable model found {metric_info_artifact}. ")
+            index_number += 1
+        if metric_info_artifact is None:
+            logging.info(f"No model found with higher accuracy than base accuracy")
+        return metric_info_artifact
+    except Exception as e:
+        raise AdultException(e,sys) from e
 
 
 
