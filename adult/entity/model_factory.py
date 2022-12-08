@@ -81,8 +81,8 @@ def evaluate_regression(model_list:List, Xtrain:np.array, Xtest:np.array, yTrain
 
                 logging.info(f"Acceptable model found {metric_info_artifact}. ")
             index_number += 1
-        if metric_info_artifact is None:
-            logging.info(f"No model found with higher accuracy than base accuracy")
+            if metric_info_artifact is None:
+                logging.info(f"No model found with higher accuracy than base accuracy")
         return metric_info_artifact
     except Exception as e:
         raise AdultException(e,sys) from e
@@ -237,7 +237,7 @@ class model_factory:
 
     @staticmethod
     def get_best_model_from_grid_searched_best_model_list(grid_searched_best_model_list: List[GridSearchedBestModel],
-                                                          base_accuracy=0.6
+                                                          base_accuracy=0.3
                                                           ) -> BestModel:
         try:
             best_model = None
@@ -254,7 +254,7 @@ class model_factory:
         except Exception as e:
             raise AdultException(e, sys) from e
 
-    def get_best_model(self, X, y,base_accuracy=0.6) -> BestModel:
+    def get_best_model(self, X, y,base_accuracy=0.3) -> BestModel:
         try:
             logging.info("Started Initializing model from config file")
             initialized_model_list = self.get_initialized_model_list()

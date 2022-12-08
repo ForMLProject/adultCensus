@@ -42,20 +42,6 @@ class data_transformation_component:
             return preprocessing
 
         except Exception as e:
-            raise AdultException(e,sys) from e 
-
-    def get_transformed_target_object(self)->ColumnTransformer:
-        try: 
-            schema_data = self.data_validation_artifact.schema_file_path
-            data_schema = read_yaml_file(schema_data)
-
-            target_cols = data_schema[SCHEMA_TARGET_COLUMN]
-            target_pipeline = make_pipeline(SimpleImputer(missing_values=np.nan, strategy="most_frequent"), LabelEncoder(), StandardScaler(with_mean=False))
-            logging.info(f"Target Column is {target_cols}")
-            preprocessing_target = ColumnTransformer([("target_cols", target_pipeline, target_cols)])
-            return preprocessing_target
-            
-        except Exception as e:
             raise AdultException(e,sys) from e        
         
     def initiate_data_transformation(self)->DataTransformationArtifact:
@@ -63,7 +49,7 @@ class data_transformation_component:
             logging.info(f"Obtaining preprocessing object")
 
             preprocessing_obj = self.get_transformed_object()
-            preprocessing_target = self.get_transformed_target_object()
+            label = LabelEncoder()
 
             logging.info(f"Obtaining training and test file path.")
 
@@ -94,10 +80,12 @@ class data_transformation_component:
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
             
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
-            input_feature_test_arr = preprocessing_obj.transform(test_df)
-            train_arr = np.c_[ input_feature_train_arr]
+            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
+            target_feature_train_arr = label.fit_transform(target_feature_train_df)
+            target_feature_test_arr = label.transform(target_feature_test_df)
+            train_arr = np.c_[ input_feature_train_arr, target_feature_train_arr]
 
-            test_arr = np.c_[input_feature_test_arr]
+            test_arr = np.c_[input_feature_test_arr, target_feature_test_arr]
             transformed_train_dir = self.data_transformation_config.transformed_train_file_path
             transformed_test_dir = self.data_transformation_config.transformed_test_file_path
             
