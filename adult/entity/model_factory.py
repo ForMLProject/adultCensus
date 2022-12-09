@@ -54,13 +54,13 @@ def evaluate_regression(model_list:List, Xtrain:np.array, Xtest:np.array, yTrain
             train_accuracy =  r2_score(yTrain, y_train_pred)
             test_accuracy = r2_score(yTest, y_test_pred)
 
-            logging.info(f"Train accuracy is {train_accuracy} and Test accuracy is {test_accuracy}")
+            logging.info(f"Train accuracy is {train_accuracy} and Test accuracy is {test_accuracy} of model {str(model)}")
             logging.info(f"Calculating RMSE")
 
             train_rmse = mean_squared_error(yTrain,y_train_pred)
             test_rmse = mean_squared_error(yTest, y_test_pred)
 
-            logging.info(f"Train rmse is {train_rmse} and Test rmse is {test_rmse}")
+            logging.info(f"Train rmse is {train_rmse} and Test rmse is {test_rmse} of model {str(model)}")
 
             model_accuracy = (2*(train_accuracy*test_accuracy))/(train_accuracy+test_accuracy)
             diff_in_accuracy = abs(test_accuracy - train_accuracy)
@@ -68,22 +68,22 @@ def evaluate_regression(model_list:List, Xtrain:np.array, Xtest:np.array, yTrain
             logging.info(f"model accuracy is {model_accuracy} and difference is {diff_in_accuracy}")
             model_name = str(model)
 
-            if model_accuracy >= base_accuracy and diff_in_accuracy <= 0.05:
-                base_accuracy = model_accuracy
-                metric_info_artifact = MetricInfoArtifact(model_name=model_name,
-                                                model_object=model,
-                                                train_rmse=train_rmse,
-                                                test_rmse=test_rmse,
-                                                train_accuracy=test_accuracy,
-                                                test_accuracy=test_accuracy,
-                                                index_number=index_number,
-                                                model_accuracy=model_accuracy)
+            # if model_accuracy >= base_accuracy and diff_in_accuracy <= 0.05:
+            #     base_accuracy = model_accuracy
+            metric_info_artifact = MetricInfoArtifact(model_name=model_name,
+                                            model_object=model,
+                                            train_rmse=train_rmse,
+                                            test_rmse=test_rmse,
+                                            train_accuracy=test_accuracy,
+                                            test_accuracy=test_accuracy,
+                                            index_number=index_number,
+                                            model_accuracy=model_accuracy)
 
-                logging.info(f"Acceptable model found {metric_info_artifact}. ")
+            logging.info(f"Acceptable model found {metric_info_artifact}. ")
             index_number += 1
-            if metric_info_artifact is None:
-                logging.info(f"No model found with higher accuracy than base accuracy")
-        return metric_info_artifact
+            # if metric_info_artifact is None:
+            #     logging.info(f"No model found with higher accuracy than base accuracy")
+            return metric_info_artifact
     except Exception as e:
         raise AdultException(e,sys) from e
 
@@ -171,6 +171,7 @@ class model_factory:
             grid_search_obj = grid_search_ref(estimator = initialized_model_detail.model, param_grid = initialized_model_detail.param_grid_search)
             grid_search_obj = model_factory.update_property_class(grid_search_obj, self.grid_search_params)
             logging.info(f"{'>>'*30}Training {type(initialized_model_detail.model).__name__} Started.{'<<'*30}")
+
             grid_search_obj.fit(input_feature, output_feature)
             logging.info(f"{'>>'*30}Training {type(initialized_model_detail.model).__name__} Completed.{'<<'*30}")
             return GridSearchedBestModel(
@@ -237,7 +238,7 @@ class model_factory:
 
     @staticmethod
     def get_best_model_from_grid_searched_best_model_list(grid_searched_best_model_list: List[GridSearchedBestModel],
-                                                          base_accuracy=0.3
+                                                          base_accuracy=0.5
                                                           ) -> BestModel:
         try:
             best_model = None
@@ -254,7 +255,7 @@ class model_factory:
         except Exception as e:
             raise AdultException(e, sys) from e
 
-    def get_best_model(self, X, y,base_accuracy=0.3) -> BestModel:
+    def get_best_model(self, X, y,base_accuracy=0.5) -> BestModel:
         try:
             logging.info("Started Initializing model from config file")
             initialized_model_list = self.get_initialized_model_list()

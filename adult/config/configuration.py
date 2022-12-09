@@ -73,7 +73,7 @@ class Configuration:
             model_training_artifact_dir = os.path.join(artifact_dir, MODEL_TRAINING_ARTIFACT_DIR_KEY , get_curr_timestamp())
             trained_model_path = os.path.join(model_training_artifact_dir, model_training_info[MODEL_TRAINING_TRAINED_MODEL_DIR_KEY], model_training_info[MODEL_TRAINING_TRAINED_MODEL_FILE_NAME_KEY])
             model_config_path = os.path.join(ROOT_DIR, model_training_info[MODEL_TRAINING_BASE_CONF_DIR_KEY], model_training_info[MODEL_TRAINING_BASE_CONF_FILE_NAME_KEY])
-            model_trainer_config = ModelTrainerConfig(base_accuracy=0.3,
+            model_trainer_config = ModelTrainerConfig(base_accuracy=0.5,
                                                     trained_model_path=trained_model_path,
                                                     model_config_path=model_config_path)
             return model_trainer_config

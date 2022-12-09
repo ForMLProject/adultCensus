@@ -65,6 +65,37 @@ class data_transformation_component:
             test_df = load_data(file_path=test_file_path,schema_file_path=schema_file_path)
             schema = read_yaml_file(schema_file_path)
 
+            
+            def remove_outliers_IQR_train(col):
+                # Finding the IQR
+                percentile25 = train_df[col].quantile(0.25)
+                percentile75 = train_df[col].quantile(0.75)
+                iqr = percentile75 - percentile25
+                upper_limit = percentile75 + 1.5 * iqr
+                lower_limit = percentile25 - 1.5 * iqr
+                train_df[col] = np.where(train_df[col]>upper_limit, upper_limit, np.where(train_df[col]<lower_limit,lower_limit,train_df[col]))
+                return train_df[train_df[col] > upper_limit]
+
+            def remove_outliers_IQR_test(col):
+                # Finding the IQR
+                percentile25 = test_df[col].quantile(0.25)
+                percentile75 = test_df[col].quantile(0.75)
+                iqr = percentile75 - percentile25
+                upper_limit = percentile75 + 1.5 * iqr
+                lower_limit = percentile25 - 1.5 * iqr
+                test_df[col] = np.where(test_df[col]>upper_limit, upper_limit, np.where(test_df[col]<lower_limit,lower_limit,test_df[col]))
+                return test_df[test_df[col] > upper_limit]
+
+            remove_outliers_IQR_train('age')
+            remove_outliers_IQR_train('fnlwgt')
+            remove_outliers_IQR_train('education-num')
+            remove_outliers_IQR_train('hours-per-week')
+
+            remove_outliers_IQR_test('age')
+            remove_outliers_IQR_test('fnlwgt')
+            remove_outliers_IQR_test('education-num')
+            remove_outliers_IQR_test('hours-per-week')
+
             target_column = schema[SCHEMA_TARGET_COLUMN]
 
             logging.info(f"Splitting input and target feature from training and testing dataframe.")

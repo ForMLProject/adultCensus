@@ -5,15 +5,23 @@ grid_search:
     cv: 5
     verbose: 2
 model_selection:
+  # module_0:
+  #   class: LinearRegression
+  #   module: sklearn.linear_model
+  #   params:
+  #     fit_intercept: true
+  #   search_param_grid:
+  #     fit_intercept:
+  #     - true
+  #     - false
   module_0:
-    class: LinearRegression
-    module: sklearn.linear_model
+    class: KNeighborsRegressor
+    module: sklearn.neighbors
     params:
-      fit_intercept: true
+      n_neighbors : [10, 20, 30 , 40]
     search_param_grid:
-      fit_intercept:
-      - true
-      - false
+      n_neighbors : [10, 20, 30 , 40]
+
   module_1:
     class: RandomForestRegressor
     module: sklearn.ensemble
@@ -22,4 +30,7 @@ model_selection:
     search_param_grid:
       min_samples_leaf:
       - 6
+
+    
+
   

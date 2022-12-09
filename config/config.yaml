@@ -28,7 +28,7 @@ model_training_config:
   model_file_name: model.pkl
   model_config_dir: config
   model_config_file_name: model.yaml
-  base_accuracy: 0.3
+  base_accuracy: 0.5
 
 
 model_evaluation_config:
