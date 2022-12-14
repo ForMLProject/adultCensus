@@ -1,6 +1,6 @@
 from adult.entity.artifact_entity import DataIngestionArtifact, DataTransformationArtifact, DataValidationArtifact, ModelTrainerArtifact
 from adult.entity.config_entity import ModelTrainerConfig
-from adult.entity.model_factory import model_factory, MetricInfoArtifact, GridSearchedBestModel, evaluate_regression
+from adult.entity.model_factory import model_factory, MetricInfoArtifact, GridSearchedBestModel, evaluate_regression, evaluate_classification
 import numpy as np
 import pandas as pd
 from adult.constant import *
@@ -59,7 +59,7 @@ class model_trainer:
             grid_search_best_model_list: List[GridSearchedBestModel] = ModelFactory.grid_searched_best_model_list
             model_list = [model.best_model for model in grid_search_best_model_list]
             logging.info(f"Evaluating model on training and testing dataset")
-            metric_info:MetricInfoArtifact = evaluate_regression(model_list=model_list,
+            metric_info:MetricInfoArtifact = evaluate_classification(model_list=model_list,
                                                                 Xtrain=Xtrain,
                                                                 Xtest=Xtest,
                                                                 yTrain=yTrain,

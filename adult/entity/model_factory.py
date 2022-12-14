@@ -5,7 +5,7 @@ from adult.constant import *
 from adult.util.util import read_yaml_file
 import os, sys
 from collections import namedtuple
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import r2_score, mean_squared_error, precision_score, accuracy_score
 import importlib
 from pyexpat import model
 from typing import List
@@ -38,6 +38,52 @@ MetricInfoArtifact = namedtuple("MetricInfoArtifact",
                                 ["model_name", "model_object", "train_rmse", "test_rmse", "train_accuracy",
                                  "test_accuracy", "model_accuracy", "index_number"])
 
+def evaluate_classification(model_list:List, Xtrain:np.array, Xtest:np.array, yTrain:np.array, yTest:np.array, base_accuracy:float=0.6)->MetricInfoArtifact:
+    try:
+        index_number = 0
+        metric_info_artifact = None
+        for model in model_list:
+                logging.info(f"{'>'*10}Starting Evaluation of the model {str(model)} {'<'*10}")
+                y_train_pred = model.predict(Xtrain)
+                y_test_pred = model.predict(Xtest)
+                
+                logging.info(f"Calculating accuracy of the model")
+
+                train_accuracy =  accuracy_score(yTrain, y_train_pred)
+                test_accuracy = accuracy_score(yTest, y_test_pred)
+
+                logging.info(f"Train accuracy is {train_accuracy} and Test accuracy is {test_accuracy} of model {str(model)}")
+                logging.info(f"Calculating RMSE")
+
+                train_rmse = 1 - train_accuracy
+                test_rmse = 1 - test_accuracy
+
+                logging.info(f"Train error rate is {train_rmse} and Test error rate is {test_rmse} of model {str(model)}")
+
+                model_accuracy = (2*(train_accuracy*test_accuracy))/(train_accuracy+test_accuracy)
+                diff_in_accuracy = abs(test_accuracy - train_accuracy)
+
+                logging.info(f"model accuracy is {model_accuracy} and difference is {diff_in_accuracy}")
+                model_name = str(model)
+
+                if model_accuracy >= base_accuracy and diff_in_accuracy <= 0.05:
+                    base_accuracy = model_accuracy
+                    metric_info_artifact = MetricInfoArtifact(model_name=model_name,
+                                                    model_object=model,
+                                                    train_rmse=train_rmse,
+                                                    test_rmse=test_rmse,
+                                                    train_accuracy=test_accuracy,
+                                                    test_accuracy=test_accuracy,
+                                                    index_number=index_number,
+                                                    model_accuracy=model_accuracy)
+
+                    logging.info(f"Acceptable model found {metric_info_artifact}. ")
+                index_number += 1
+        if metric_info_artifact is None:
+            logging.info(f"No model found with higher accuracy than base accuracy")
+        return metric_info_artifact
+    except Exception as e:
+        raise AdultException(e,sys) from e
 
 
 def evaluate_regression(model_list:List, Xtrain:np.array, Xtest:np.array, yTrain:np.array, yTest:np.array, base_accuracy:float=0.6)->MetricInfoArtifact:
@@ -149,7 +195,8 @@ class model_factory:
                 model_class = model_initialization_config[CLASS_KEY]
                 model_import = self.import_class_from_module(model_module, model_class)
                 model_obj = model_import()
-                if PARAM_KEY in model_initialization_config:
+                if PARAM_KEY in model_initialization_config is None:
+                    
                     model_obj_prop_data = dict(model_initialization_config[PARAM_KEY])
                     model_obj = model_factory.update_property_class(model_obj,model_obj_prop_data)
 

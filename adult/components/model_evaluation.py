@@ -6,7 +6,7 @@ from adult.constant import *
 from adult.entity.config_entity import ModelEvaluationConfig
 from adult.entity.artifact_entity import DataIngestionArtifact, DataTransformationArtifact, DataValidationArtifact, ModelTrainerArtifact, ModelEvaluationArtifact
 from adult.util.util import read_yaml_file, write_yaml_file, load_data, load_np_data, load_object
-from adult.entity.model_factory import evaluate_regression
+from adult.entity.model_factory import evaluate_classification
 import sys
 
 class model_evaluation:
@@ -117,7 +117,7 @@ class model_evaluation:
 
             model_list = [model, trained_model_object]
 
-            metric_info_artifact = evaluate_regression(model_list=model_list,
+            metric_info_artifact = evaluate_classification(model_list=model_list,
                                                                Xtrain=train_dataframe,
                                                                yTrain=train_target_arr,
                                                                Xtest=test_dataframe,

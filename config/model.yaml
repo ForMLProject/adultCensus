@@ -15,21 +15,85 @@ model_selection:
   #     - true
   #     - false
   module_0:
-    class: KNeighborsRegressor
-    module: sklearn.neighbors
+    class: XGBRFClassifier
+    module: xgboost
     params:
-      n_neighbors : [10, 20, 30 , 40]
+      n_estimators:
+        - 100
     search_param_grid:
-      n_neighbors : [10, 20, 30 , 40]
+      n_estimators:
+        - 100
+        - 200
 
   module_1:
-    class: RandomForestRegressor
+    class: XGBClassifier
+    module: xgboost
+    params:
+      objective:
+        - "binary:logistic"
+      n_estimators:
+        - 100
+    search_param_grid:
+      n_estimators:
+        - 100
+        - 200
+
+  module_2:
+    class: KNeighborsClassifier
+    module: sklearn.neighbors
+    params:
+      n_neighbors:
+        - 10
+    search_param_grid:
+      n_neighbors:
+        - 10
+        - 20
+
+    
+  module_3:
+    class: LogisticRegression
+    module: sklearn.linear_model
+    params:
+      penalty:
+        - 'l2'
+    search_param_grid:
+      penalty:
+        - 'l2'
+        - 'elasticnet'
+  
+  module_4:
+    class: SVC
+    module: sklearn.svm
+    params:
+      C:
+        - 2.0
+    search_param_grid:
+      C:
+        - 2.0
+        - 0.5
+    
+  module_5:
+    class: DecisionTreeClassifier
+    module: sklearn.tree
+    params:
+      criterion:
+        - 'gini'
+    search_param_grid:
+      criterion:
+        - 'gini'
+        - 'entropy'
+        - 'log_loss'
+    
+  module_6:
+    class: RandomForestClassifier
     module: sklearn.ensemble
     params:
-      min_samples_leaf: 3
+      n_estimators:
+        - 100
     search_param_grid:
-      min_samples_leaf:
-      - 6
+      n_estimators:
+        - 100
+        - 200
 
     
 
