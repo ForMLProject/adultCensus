@@ -134,6 +134,7 @@ class data_transformation_component:
             preprocessing_obj_file_path = self.data_transformation_config.preprocessed_file_path
 
             logging.info(f"Saving preprocessing object.")
+            logging.info(f"Data Transformation Completed \n \n")
             save_object(file_path=preprocessing_obj_file_path,obj=preprocessing_obj)
 
             data_transformation_artifact = DataTransformationArtifact(transformed_train_data_path=transformed_train_file_path,

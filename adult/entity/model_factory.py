@@ -155,6 +155,7 @@ class model_factory:
     @staticmethod
     def read_params(config_path:str)-> dict:
         try:
+            logging.info(f"Entering read_params")
             with open(config_path) as file:
                 config_attributes = yaml.safe_load(file)
 
@@ -168,6 +169,7 @@ class model_factory:
             if not isinstance(property_data, dict):
                 raise Exception(f"Please pass data in the form of dict")
             print(property_data)
+            logging.info(f"{property_data}")
             for key, value in property_data.items():
                 setattr(instance_reference, key, value) #this sets the key attribute of the instance object to the given value while getattr(module, attribute) gets the value of the passed attribute of the passed object
 
@@ -188,6 +190,7 @@ class model_factory:
     def get_initialized_model_list(self)->List[InitializedModelDetail]:
         try:
             initialized_model_list = []
+            logging.info(f"Entering get_initialized_model_list")
 
             for model_serial_number in self.initialized_model_config.keys():
                 model_initialization_config = self.initialized_model_config[model_serial_number]
@@ -195,8 +198,8 @@ class model_factory:
                 model_class = model_initialization_config[CLASS_KEY]
                 model_import = self.import_class_from_module(model_module, model_class)
                 model_obj = model_import()
-                if PARAM_KEY in model_initialization_config is None:
-                    
+                if PARAM_KEY in model_initialization_config:
+                    logging.info(f"Accessing and updating Params")
                     model_obj_prop_data = dict(model_initialization_config[PARAM_KEY])
                     model_obj = model_factory.update_property_class(model_obj,model_obj_prop_data)
 
@@ -220,6 +223,7 @@ class model_factory:
             logging.info(f"{'>>'*30}Training {type(initialized_model_detail.model).__name__} Started.{'<<'*30}")
 
             grid_search_obj.fit(input_feature, output_feature)
+            logging.info(f"{grid_search_obj}")
             logging.info(f"{'>>'*30}Training {type(initialized_model_detail.model).__name__} Completed.{'<<'*30}")
             return GridSearchedBestModel(
                 model_serial_number=initialized_model_detail.model_serial_number,
@@ -246,6 +250,7 @@ class model_factory:
         return: Function will return a GridSearchOperation
         """
         try:
+            logging.info(f"Initiating best parameter search for initialized model")
             return self.execute_grid_search(initialized_model_detail=initialized_model,
                                                       input_feature=input_feature,
                                                       output_feature=output_feature)
